@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,21 +46,12 @@ public class RedisUtil {
     }
 
     /**
-     * 获取匹配Key的相关数据
+     * 从缓存中获取指定key的值
      * @param key key
      * @return
      */
-    public List<String> getData(String key) {
-        ScanOptions options = ScanOptions.scanOptions().match(key).build();
-        RedisConnectionFactory connFactory = redisTemplate.getConnectionFactory();
-        RedisConnection conn = Objects.requireNonNull(connFactory).getConnection();
-        Cursor<byte[]> cursor = conn.scan(options);
-        List<String> result = new ArrayList<String>();
-        while (cursor.hasNext()) {
-            result.add(String.valueOf(cursor.next()));
-        }
-        RedisConnectionUtils.releaseConnection(conn, connFactory);
-        return result;
+    public Object get(String key) {
+        return key == null ? null : redisTemplate.opsForValue().get(key);
     }
 
     /**
@@ -99,5 +91,41 @@ public class RedisUtil {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * 从缓存中删除指定key
+     *
+     * @param key 可以传一个或多个值
+     */
+    public void del(String... key) {
+        if (key.length == 1) {
+            redisTemplate.delete(key[0]);
+        } else {
+            redisTemplate.delete(CollectionUtils.arrayToList(key));
+        }
+    }
+
+    /**
+     * 查找匹配的key
+     *
+     * @param key
+     * @return
+     */
+    public List<String> scan(String key) {
+        ScanOptions options = ScanOptions.scanOptions().match(key).build();
+        RedisConnectionFactory factory = redisTemplate.getConnectionFactory();
+        RedisConnection connection = Objects.requireNonNull(factory).getConnection();
+        Cursor<byte[]> cursor = connection.scan(options);
+        List<String> result = new ArrayList<String>();
+        while (cursor.hasNext()) {
+            result.add(new String(cursor.next()));
+        }
+        try {
+            RedisConnectionUtils.releaseConnection(connection, factory, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

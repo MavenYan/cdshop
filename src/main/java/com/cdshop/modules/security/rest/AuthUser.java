@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class AuthUser {
     @NotBlank
-    private String userName;
+    private String username;
 
     private String password;
 

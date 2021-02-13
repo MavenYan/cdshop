@@ -35,7 +35,7 @@ public class User {
 
     private String phone;
 
-    private String job_id;
+    private String job;
 
     private Timestamp create_time;
 

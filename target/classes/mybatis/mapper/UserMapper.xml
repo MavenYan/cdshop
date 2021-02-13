@@ -2,14 +2,13 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cdshop.modules.model">
-    <select id="loginUser" parameterType="User" resultType="User">
+<mapper namespace="com.cdshop.modules.mapper.UserMapper">
+    <select id="login" parameterType="String" resultType="User">
         SELECT
             *
-        FROM user
+        FROM
+            sys_user
         where
-        id = #{id}
-        AND password = #{password}
-
+        username = #{username}
     </select>
 </mapper>
