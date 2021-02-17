@@ -14,12 +14,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class AuthController {
     private String privateKey;
     @Value("${single.login}")
     private boolean singleLogin;
-    @Autowired
+    @Resource(name = "userServiceImpl")
     private UserService userService;
     private final SecurityProperties properties;
     private final RedisUtil redisUtil;
@@ -60,7 +61,7 @@ public class AuthController {
         String result = captcha.text();
         // 生成UUID
         String uuid = properties.getCodeKey() + UUID.randomUUID();
-        // 保存
+        // 保存到Redis中
         redisUtil.set(uuid, result, effectiveTime);
         // 验证码信息
         Map<String, Object> imgResult = new HashMap<String, Object>(){{
@@ -90,7 +91,7 @@ public class AuthController {
             throw new BadRequestException("验证码错误");
         }
         // 权限验证
-        User user = userService.login(authUser.getUsername());
+        User user = userService.findByName(authUser.getUsername());
         // 生成token
         String token = GennrateToken.token(user, properties);
         // 保存在线信息

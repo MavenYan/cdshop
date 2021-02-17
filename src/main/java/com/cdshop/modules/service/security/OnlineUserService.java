@@ -45,7 +45,7 @@ public class OnlineUserService {
         String address = StringUtils.getCityInfo(ip);
         OnlineUser onlineUser = null;
         try {
-            onlineUser = new OnlineUser(user.getUsername(), user.getNick_name(), job, browser, ip, address, EncryptUtils.desDecrypt(token), new Date());
+            onlineUser = new OnlineUser(user.getUsername(), user.getNick_name(), job, browser, ip, address, token, new Date());
         } catch (Exception e) {
             e.printStackTrace();
         }

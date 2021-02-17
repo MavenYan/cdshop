@@ -72,7 +72,7 @@ public class RedisUtil {
     }
 
     /**
-     * 将数据保存并设置生效时间
+     * 将数据保存并设置有效时间
      *
      * @param key 键
      * @param value 值

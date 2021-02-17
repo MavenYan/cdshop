@@ -22,7 +22,7 @@ public class GennrateToken {
             // 过期时间
             Date date = new Date(System.currentTimeMillis() + properties.getTokenValidityInSeconds());
             // 秘钥及加密算法
-            Algorithm algorithm = Algorithm.HMAC256(properties.getOnlineKey());
+            Algorithm algorithm = Algorithm.HMAC256(properties.getBase64Secret());
             // 设置头部信息
             Map<String, Object> header = new HashMap<String, Object>(2){{
                 put("typ", "JWT");

@@ -9,5 +9,5 @@ public interface UserService {
      * @param username
      * @return
      */
-    public User login(String username);
+    public User findByName(String username);
 }
